@@ -1,4 +1,4 @@
-# 🇩🇪 DeutschCheckBot
+# DeutschCheckBot
 
 **DeutschCheckBot** is a Telegram bot that checks whether a German language exam certificate (telc) has been issued based on provided credentials. It runs headlessly using [Playwright](https://playwright.dev/python/) and can be triggered manually via Telegram.
 
