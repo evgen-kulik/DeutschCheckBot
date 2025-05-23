@@ -48,6 +48,7 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 PARTICIPANT_NUMBER=your_telc_participant_number
 DATE_OF_BIRTH=dd.mm.yyyy
 DATE_OF_ISSUE=dd.mm.yyyy
+RENDER_EXTERNAL_URL=your-app-name.onrender.com
 ```
 
 ### 4. Run the bot locally
