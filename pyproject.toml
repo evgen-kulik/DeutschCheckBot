@@ -9,8 +9,8 @@ readme = "README.md"
 python = "^3.11"
 playwright = "^1.52.0"
 python-dotenv = "^1.1.0"
-python-telegram-bot = { version = "^22.1", extras = ["webhooks"] }
 update = "^0.0.1"
+python-telegram-bot = {version = "^22.1", extras = ["webhooks"]}
 
 [build-system]
 requires = ["poetry-core"]
