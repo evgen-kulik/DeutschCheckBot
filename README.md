@@ -30,7 +30,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/DeutschCheckBot.git
+git clone https://github.com/evgen-kulik/DeutschCheckBot.git
 cd DeutschCheckBot
 ````
 
