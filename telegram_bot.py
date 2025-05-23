@@ -17,21 +17,16 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    app = (
-        ApplicationBuilder()
-        .token(TELEGRAM_BOT_TOKEN)
-        .webhook_path("/webhook")
-        .build()
-    )
-
+    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    print(f"Webhook URL: https://{RENDER_EXTERNAL_URL}/webhook")
+    webhook_url = f"https://{RENDER_EXTERNAL_URL}/webhook"
+    print(f"Webhook URL: {webhook_url}")
 
     app.run_webhook(
         listen="0.0.0.0",
         port=int(os.environ.get("PORT", 8080)),
-        webhook_url=f"https://{RENDER_EXTERNAL_URL}/webhook"
+        webhook_url=webhook_url
     )
 
 
