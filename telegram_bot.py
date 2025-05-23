@@ -1,3 +1,39 @@
+# import os
+# from dotenv import load_dotenv
+# from telegram import Update
+# from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+#
+# from check_cert import check_cert
+#
+# load_dotenv()
+# TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+# RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
+#
+#
+# async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     await update.message.reply_text("⏳ Checking the certificate...")
+#     result = check_cert()
+#     await update.message.reply_text(result)
+#
+#
+# def main():
+#     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+#     app.add_handler(CommandHandler("check", check_command))
+#
+#     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
+#     print(f"Webhook URL: {webhook_url}")
+#
+#     app.run_webhook(
+#         listen="0.0.0.0",
+#         port=int(os.environ.get("PORT", 8080)),
+#         webhook_url=webhook_url
+#     )
+#
+#
+# if __name__ == "__main__":
+#     main()
+
+
 import os
 from dotenv import load_dotenv
 from telegram import Update
@@ -7,7 +43,6 @@ from check_cert import check_cert
 
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
 
 
 async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -19,15 +54,7 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
-
-    webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
-    print(f"Webhook URL: {webhook_url}")
-
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 8080)),
-        webhook_url=webhook_url
-    )
+    app.run_polling()
 
 
 if __name__ == "__main__":
