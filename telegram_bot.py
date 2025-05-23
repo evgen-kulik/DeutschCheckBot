@@ -20,11 +20,11 @@ def main():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    print(f"Webhook URL: https://{RENDER_EXTERNAL_URL}/webhook")
+    print(f"Webhook URL: {RENDER_EXTERNAL_URL}/webhook")
     app.run_webhook(
         listen="0.0.0.0",
         port=int(os.environ.get("PORT", 8080)),
-        webhook_url=f"https://{RENDER_EXTERNAL_URL}/webhook"
+        webhook_url=f"{RENDER_EXTERNAL_URL}/webhook"
     )
 
 
