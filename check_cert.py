@@ -10,7 +10,10 @@ DATE_OF_BIRTH = os.getenv("DATE_OF_BIRTH")
 DATE_OF_ISSUE = os.getenv("DATE_OF_ISSUE")
 
 
-def main():
+def check_cert() -> str:
+    if not PARTICIPANT_NUMBER or not DATE_OF_BIRTH or not DATE_OF_ISSUE:
+        return "❌ Not all environment variables found. Check .env file."
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -40,7 +43,3 @@ def main():
             print("⚠️ Parsing error")
 
         browser.close()
-
-
-if __name__ == "__main__":
-    main()
