@@ -15,10 +15,8 @@ executor = ThreadPoolExecutor()
 
 async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("⏳ Checking the certificate...")
-
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(executor, check_cert)
-
     await update.message.reply_text(result)
 
 
@@ -39,4 +37,11 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            loop.create_task(main())
+        else:
+            loop.run_until_complete(main())
+    except RuntimeError:
+        asyncio.run(main())
