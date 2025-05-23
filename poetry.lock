@@ -260,6 +260,17 @@ files = [
 ]
 
 [[package]]
+name = "style"
+version = "1.1.0"
+description = "🌈 Terminal string styling"
+optional = false
+python-versions = "*"
+files = [
+    {file = "style-1.1.0-py2.py3-none-any.whl", hash = "sha256:6485a4bcb84629341a5fd1587fe3ac4887daa4741f0c8a1d01b9c3c8a263afe7"},
+    {file = "style-1.1.0.tar.gz", hash = "sha256:8eb365fc15039b19b728bd4e6e85fb7daf24e7aeeec6a15a666f97484c564005"},
+]
+
+[[package]]
 name = "tornado"
 version = "6.5.1"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
@@ -291,7 +302,20 @@ files = [
     {file = "typing_extensions-4.13.2.tar.gz", hash = "sha256:e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef"},
 ]
 
+[[package]]
+name = "update"
+version = "0.0.1"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "update-0.0.1-py2.py3-none-any.whl", hash = "sha256:a25522b4bf60e3e3c1a3ff3ca3a4f5a328ac4b8ff400fdc9614483147e313323"},
+]
+
+[package.dependencies]
+style = "1.1.0"
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a95e92cac5be5942bffac2ecbecb23e3790c17a62fe3705bc53a55cf14777372"
+content-hash = "ee8532d5a8137c7af0a4030b1a208fddc31dd2ada7f471159d59b5f0d14dc1a5"
