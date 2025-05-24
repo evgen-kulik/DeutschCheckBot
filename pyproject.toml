@@ -12,6 +12,7 @@ python-dotenv = "^1.1.0"
 update = "^0.0.1"
 python-telegram-bot = {version = "^22.1", extras = ["webhooks"]}
 nest-asyncio = "^1.6.0"
+aiohttp = "^3.11.18"
 
 [build-system]
 requires = ["poetry-core"]
