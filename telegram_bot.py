@@ -39,18 +39,17 @@ async def set_webhook(app):
         print(f"❌ Ошибка при установке webhook: {e}")
 
 
-def main():
+async def main():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    asyncio.get_event_loop().create_task(set_webhook(app))
+    await set_webhook(app)
 
-    app.run_webhook(
+    await app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=f"{RENDER_EXTERNAL_URL}/webhook",
     )
 
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
