@@ -11,6 +11,7 @@ from telegram.ext import (
     ContextTypes,
 )
 from check_cert import check_cert
+import subprocess
 
 load_dotenv()
 nest_asyncio.apply()
@@ -26,6 +27,11 @@ PORT = int(os.getenv("PORT", 8080))
 
 if not TELEGRAM_BOT_TOKEN or not WEBHOOK_URL:
     raise ValueError("TELEGRAM_BOT_TOKEN and WEBHOOK_URL must be set in .env")
+
+# Automatically install browsers if not installed
+if not os.path.exists("/opt/render/.cache/ms-playwright"):
+    print("Installing Playwright browsers...")
+    subprocess.run(["playwright", "install", "--with-deps"], check=True)
 
 user_tasks = {}
 
