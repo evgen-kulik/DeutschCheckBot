@@ -31,7 +31,7 @@ if not TELEGRAM_BOT_TOKEN or not WEBHOOK_URL:
 # Automatically install browsers if not installed
 if not os.path.exists("/opt/render/.cache/ms-playwright"):
     print("Installing Playwright browsers...")
-    subprocess.run(["playwright", "install", "--with-deps"], check=True)
+    subprocess.run(["playwright", "install"], check=True)
 
 user_tasks = {}
 
