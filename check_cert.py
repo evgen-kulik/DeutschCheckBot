@@ -11,7 +11,7 @@ DATE_OF_BIRTH = os.getenv("DATE_OF_BIRTH")
 DATE_OF_ISSUE = os.getenv("DATE_OF_ISSUE")
 
 
-async def check_certificate() -> str:
+async def check_cert() -> str:
     if not PARTICIPANT_NUMBER or not DATE_OF_BIRTH or not DATE_OF_ISSUE:
         logger.warning("Missing environment variables.")
         return "❌ Required environment variables are missing. Please check your .env file."
