@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from check_cert import check_cert
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -22,7 +22,7 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(result)
 
 
-async def post_init(app):
+async def set_webhook(app):
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
     print(f"🌐 Установка webhook на: {webhook_url}")
 
@@ -36,23 +36,23 @@ async def post_init(app):
 
 
 def main():
-    app = (
-        ApplicationBuilder()
-        .token(TELEGRAM_BOT_TOKEN)
-        .post_init(post_init)  # ✅ Здесь указываем функцию для установки webhook
-        .build()
-    )
-
+    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    # ✅ НЕ используем asyncio.run() — Telegram сам запустит event loop
+    # Сначала установим webhook
+    asyncio.run(set_webhook(app))
+
+    # Запускаем webhook сервер
     app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
+        webhook_path="/webhook",
         webhook_url=f"{RENDER_EXTERNAL_URL}/webhook",
-        webhook_path="/webhook",  # 👈 Указываем путь, который ожидает Telegram
     )
 
 
 if __name__ == "__main__":
+    import telegram
+
+    print("python-telegram-bot version:", telegram.__version__)  # Проверка версии в логе
     main()
