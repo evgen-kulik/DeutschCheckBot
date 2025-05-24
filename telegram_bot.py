@@ -50,6 +50,7 @@ def main():
         listen="0.0.0.0",
         port=PORT,
         webhook_url=f"{RENDER_EXTERNAL_URL}/webhook",
+        webhook_path="/webhook",  # 👈 Указываем путь, который ожидает Telegram
     )
 
 
