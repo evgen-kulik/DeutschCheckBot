@@ -1,49 +1,50 @@
+import logging
 import os
-import asyncio
-from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from concurrent.futures import ThreadPoolExecutor
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+)
 from check_cert import check_cert
+from dotenv import load_dotenv
 
+# Load .env variables
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
-PORT = int(os.getenv("PORT", 8080))
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-executor = ThreadPoolExecutor()
+# Setup logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 
-async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("📥 Получена команда /check")
-    await update.message.reply_text("⏳ Проверяю сертификат...")
-    loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(executor, check_cert)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "👋 Welcome to the Deutsch Certificate Check Bot!\n"
+        "Use /check to verify your certificate."
+    )
+
+
+async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🔍 Checking your certificate, please wait...")
+    result = check_cert()
     await update.message.reply_text(result)
 
 
-async def main():
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("check", check_command))
+def main():
+    if not TELEGRAM_BOT_TOKEN:
+        raise RuntimeError("❌ TELEGRAM_BOT_TOKEN is missing from environment variables.")
 
-    webhook_url = f"{RENDER_EXTERNAL_URL}"  # без /webhook
-    print(f"🌐 Установка webhook на: {webhook_url}")
+    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # Проверка и установка webhook
-    info = await app.bot.get_webhook_info()
-    print(f"📡 Текущий webhook: {info.url}")
-    if info.url != webhook_url:
-        await app.bot.set_webhook(webhook_url)
-        print("✅ Webhook установлен")
-    else:
-        print("ℹ️ Webhook уже установлен")
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("check", check))
 
-    # Запуск сервера: PTB сам обрабатывает запросы на "/"
-    await app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-    )
+    app.run_polling()
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
