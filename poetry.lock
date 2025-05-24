@@ -171,6 +171,17 @@ files = [
 all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
 
 [[package]]
+name = "nest-asyncio"
+version = "1.6.0"
+description = "Patch asyncio to allow nested event loops"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c"},
+    {file = "nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe"},
+]
+
+[[package]]
 name = "playwright"
 version = "1.52.0"
 description = "A high-level API to automate web browsers"
@@ -318,4 +329,4 @@ style = "1.1.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ee8532d5a8137c7af0a4030b1a208fddc31dd2ada7f471159d59b5f0d14dc1a5"
+content-hash = "41ff24b2050f243e813d22f731ca20cbda6d7792c2f1650a0793d843b098f751"
