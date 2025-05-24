@@ -6,7 +6,6 @@ from check_cert import check_cert
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 
-# Load environment variables
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
@@ -23,33 +22,36 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(result)
 
 
-async def set_webhook(app):
+async def post_init(app):
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
     print(f"🌐 Установка webhook на: {webhook_url}")
 
-    try:
-        current = await app.bot.get_webhook_info()
-        print(f"📡 Текущий webhook: {current.url}")
-        if current.url != webhook_url:
-            await app.bot.set_webhook(webhook_url)
-            print("✅ Webhook установлен")
-        else:
-            print("ℹ️ Webhook уже установлен")
-    except Exception as e:
-        print(f"❌ Ошибка при установке webhook: {e}")
+    current = await app.bot.get_webhook_info()
+    print(f"📡 Текущий webhook: {current.url}")
+    if current.url != webhook_url:
+        await app.bot.set_webhook(webhook_url)
+        print("✅ Webhook установлен")
+    else:
+        print("ℹ️ Webhook уже установлен")
 
 
-async def main():
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+def main():
+    app = (
+        ApplicationBuilder()
+        .token(TELEGRAM_BOT_TOKEN)
+        .post_init(post_init)  # ✅ Здесь указываем функцию для установки webhook
+        .build()
+    )
+
     app.add_handler(CommandHandler("check", check_command))
 
-    await set_webhook(app)
-
-    await app.run_webhook(
+    # ✅ НЕ используем asyncio.run() — Telegram сам запустит event loop
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=f"{RENDER_EXTERNAL_URL}/webhook",
     )
 
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
