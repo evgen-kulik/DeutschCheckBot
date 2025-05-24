@@ -23,15 +23,14 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(result)
 
 
-async def main():
+def main():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    # Устанавливаем webhook
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
     print(f"🌐 Установка webhook на: {webhook_url}")
 
-    try:
+    async def setup_webhook():
         current = await app.bot.get_webhook_info()
         print(f"📡 Текущий webhook: {current.url}")
         if current.url != webhook_url:
@@ -39,10 +38,10 @@ async def main():
             print("✅ Webhook установлен")
         else:
             print("ℹ️ Webhook уже установлен")
-    except Exception as e:
-        print(f"❌ Ошибка при установке webhook: {e}")
 
-    await app.run_webhook(
+    asyncio.run(setup_webhook())
+
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=webhook_url,
@@ -50,4 +49,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
