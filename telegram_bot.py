@@ -22,11 +22,11 @@ if not TELEGRAM_BOT_TOKEN:
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("👋 Привіт! Я DeutschCheckBot. Напиши /check, щоб перевірити сертифікат.")
+    await update.message.reply_text("👋 Hello! I'm DeutschCheckBot. Type /check to check the certificate.")
 
 
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("⏳ Перевіряю сертифікат...")
+    await update.message.reply_text("⏳ Checking the certificate...")
     result = await check_cert()
     await update.message.reply_text(result)
 
