@@ -1,7 +1,6 @@
 import logging
 import os
 import asyncio
-import json
 from aiohttp import web
 import nest_asyncio
 from dotenv import load_dotenv
@@ -31,7 +30,6 @@ if not TELEGRAM_BOT_TOKEN or not WEBHOOK_URL:
 user_tasks = {}
 
 
-# === Telegram Bot Handlers ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("👋 Hello! I'm DeutschCheckBot. Type /check to check the certificate.")
 
@@ -78,7 +76,6 @@ async def clear_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     await update.message.reply_text("✅ All running tasks have been cleared.")
 
 
-# === AIOHTTP Webhook Handler ===
 async def handle_webhook(request):
     try:
         data = await request.json()
@@ -99,11 +96,12 @@ async def run():
     application.add_handler(CommandHandler("check", check))
     application.add_handler(CommandHandler("clear_tasks", clear_tasks))
 
-    # Удаляем старые webhooks и устанавливаем новый
     await application.bot.delete_webhook(drop_pending_updates=True)
     await application.bot.set_webhook(url=WEBHOOK_URL)
 
-    # Aiohttp app
+    await application.initialize()
+    await application.start()
+
     web_app = web.Application()
     web_app.router.add_post("/webhook/", handle_webhook)
 
