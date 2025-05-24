@@ -1,10 +1,10 @@
 import os
-import asyncio
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from check_cert import check_cert
 from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 # Load environment variables
 load_dotenv()
@@ -22,27 +22,30 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(result)
 
 
-async def start_bot():
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-    app.add_handler(CommandHandler("check", check_command))
-
+async def set_webhook(app):
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
     print(f"Webhook URL: {webhook_url}")
 
     try:
-        # Check if webhook already set to avoid flood control error
         current = await app.bot.get_webhook_info()
         if current.url != webhook_url:
             await app.bot.set_webhook(webhook_url)
     except Exception as e:
         print(f"⚠️ Failed to set webhook: {e}")
 
-    await app.run_webhook(
+
+def main():
+    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    app.add_handler(CommandHandler("check", check_command))
+
+    asyncio.get_event_loop().create_task(set_webhook(app))
+
+    app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=webhook_url
+        webhook_url=f"{RENDER_EXTERNAL_URL}/webhook",
     )
 
 
 if __name__ == "__main__":
-    asyncio.run(start_bot())
+    main()
