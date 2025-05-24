@@ -16,6 +16,7 @@ executor = ThreadPoolExecutor()
 
 
 async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("📥 Получена команда /check")
     await update.message.reply_text("⏳ Checking the certificate...")
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(executor, check_cert)
@@ -24,14 +25,18 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def set_webhook(app):
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
-    print(f"Webhook URL: {webhook_url}")
+    print(f"🌐 Установка webhook на: {webhook_url}")
 
     try:
         current = await app.bot.get_webhook_info()
+        print(f"📡 Текущий webhook: {current.url}")
         if current.url != webhook_url:
             await app.bot.set_webhook(webhook_url)
+            print("✅ Webhook установлен")
+        else:
+            print("ℹ️ Webhook уже установлен")
     except Exception as e:
-        print(f"⚠️ Failed to set webhook: {e}")
+        print(f"❌ Ошибка при установке webhook: {e}")
 
 
 def main():
