@@ -1,14 +1,16 @@
 import os
+import asyncio
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from check_cert import check_cert
 from concurrent.futures import ThreadPoolExecutor
-import asyncio
 
+# Load environment variables
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
+PORT = int(os.getenv("PORT", 8080))
 
 executor = ThreadPoolExecutor()
 
@@ -20,28 +22,27 @@ async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(result)
 
 
-async def main():
+async def start_bot():
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
     webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
     print(f"Webhook URL: {webhook_url}")
 
-    await app.bot.set_webhook(webhook_url)
+    try:
+        # Check if webhook already set to avoid flood control error
+        current = await app.bot.get_webhook_info()
+        if current.url != webhook_url:
+            await app.bot.set_webhook(webhook_url)
+    except Exception as e:
+        print(f"⚠️ Failed to set webhook: {e}")
 
     await app.run_webhook(
         listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 8080)),
+        port=PORT,
         webhook_url=webhook_url
     )
 
 
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            loop.create_task(main())
-        else:
-            loop.run_until_complete(main())
-    except RuntimeError:
-        asyncio.run(main())
+    asyncio.run(start_bot())
