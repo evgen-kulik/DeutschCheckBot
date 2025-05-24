@@ -12,6 +12,17 @@ DATE_OF_BIRTH = os.getenv("DATE_OF_BIRTH")
 
 
 async def check_cert_with_date(issue_date: str) -> str:
+    """
+    Attempts to verify a certificate on the telc results website
+    using a specific issue date.
+
+    Args:
+        issue_date (str): The date the certificate was issued, formatted as "dd.mm.yyyy".
+
+    Returns:
+        str: A message indicating whether the certificate was found,
+             not found, or could not be interpreted.
+    """
     logger.info(f"Checking certificate with issue date: {issue_date}")
 
     async with async_playwright() as p:
@@ -26,6 +37,7 @@ async def check_cert_with_date(issue_date: str) -> str:
         try:
             await page.get_by_role("button", name="Zertifikat suchen").click()
         except:
+            logger.warning("Primary search button not found. Trying fallback button.")
             await page.locator('button:has(svg.fa-magnifying-glass)').click()
 
         await page.wait_for_timeout(2000)
@@ -41,6 +53,13 @@ async def check_cert_with_date(issue_date: str) -> str:
 
 
 async def check_cert() -> str:
+    """
+    Checks for the existence of a certificate by attempting verification
+    for today and each of the previous 30 days.
+
+    Returns:
+        str: A message indicating the result of the certificate search.
+    """
     if not PARTICIPANT_NUMBER or not DATE_OF_BIRTH:
         logger.warning("Missing environment variables.")
         return "❌ Required environment variables are missing. Please check your .env file."
