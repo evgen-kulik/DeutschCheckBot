@@ -1,14 +1,14 @@
 import os
+import asyncio
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from check_cert import check_cert
 from concurrent.futures import ThreadPoolExecutor
-import asyncio
+from check_cert import check_cert
 
-# Загрузка переменных окружения
 load_dotenv()
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")
 PORT = int(os.getenv("PORT", 8080))
 
@@ -17,36 +17,33 @@ executor = ThreadPoolExecutor()
 
 async def check_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print("📥 Получена команда /check")
-    await update.message.reply_text("⏳ Checking the certificate...")
+    await update.message.reply_text("⏳ Проверяю сертификат...")
     loop = asyncio.get_running_loop()
     result = await loop.run_in_executor(executor, check_cert)
     await update.message.reply_text(result)
 
 
-def main():
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+async def main():
+    app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("check", check_command))
 
-    webhook_url = f"{RENDER_EXTERNAL_URL}/webhook"
+    webhook_url = f"{RENDER_EXTERNAL_URL}"  # без /webhook
     print(f"🌐 Установка webhook на: {webhook_url}")
 
-    async def setup_webhook():
-        current = await app.bot.get_webhook_info()
-        print(f"📡 Текущий webhook: {current.url}")
-        if current.url != webhook_url:
-            await app.bot.set_webhook(webhook_url)
-            print("✅ Webhook установлен")
-        else:
-            print("ℹ️ Webhook уже установлен")
+    # Проверка и установка webhook
+    info = await app.bot.get_webhook_info()
+    print(f"📡 Текущий webhook: {info.url}")
+    if info.url != webhook_url:
+        await app.bot.set_webhook(webhook_url)
+        print("✅ Webhook установлен")
+    else:
+        print("ℹ️ Webhook уже установлен")
 
-    asyncio.run(setup_webhook())
-
-    app.run_webhook(
+    # Запуск сервера: PTB сам обрабатывает запросы на "/"
+    await app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=webhook_url,
     )
 
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
