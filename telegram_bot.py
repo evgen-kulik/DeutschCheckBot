@@ -28,7 +28,8 @@ async def main() -> None:
 
     await app.bot.delete_webhook(drop_pending_updates=True)
 
-    await app.run_polling()
+    # Важно: close_loop=False чтобы не пытаться закрыть уже запущенный event loop
+    await app.run_polling(close_loop=False)
 
 
 if __name__ == "__main__":
