@@ -30,7 +30,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🔍 Checking your certificate, please wait...")
-    result = check_cert()
+    result = await check_cert()  # <-- await!
     await update.message.reply_text(result)
 
 
