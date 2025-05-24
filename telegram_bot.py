@@ -3,8 +3,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 from telegram import Update
 from telegram.ext import ContextTypes
 import os
-import asyncio
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
@@ -14,29 +14,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("TELEGRAM_BOT_TOKEN is not set in environment variables")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Привет! Я DeutschCheckBot.")
 
 
-def main() -> None:
+async def main() -> None:
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
 
-    async def run():
-        await app.bot.delete_webhook(drop_pending_updates=True)
-        await app.run_polling()
+    await app.bot.delete_webhook(drop_pending_updates=True)
 
-    try:
-        asyncio.get_event_loop().run_until_complete(run())
-    except RuntimeError as e:
-        if "already running" in str(e):
-            asyncio.create_task(run())
-        else:
-            raise
+    await app.run_polling()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
